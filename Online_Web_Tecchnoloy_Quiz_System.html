@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive Web-Based Web Technology Assessment System</title>
+
+<style>
+html { scroll-behavior: smooth; }
+
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  padding:0;
+  background: linear-gradient(135deg,#74ebd5,#ACB6E5);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+h1{
+  text-align:center;
+  color:white;
+  padding:30px 0 10px;
+}
+
+/* ===== TOP BUTTON CONTAINER ===== */
+.top-buttons{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.top-btn{
+  padding:10px 25px;
+  border:none;
+  border-radius:40px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+  transition:0.3s;
+}
+
+/* Go Bottom Gradient */
+.go-btn{
+  background:linear-gradient(45deg,#6a11cb,#2575fc);
+}
+
+.go-btn:hover{
+  transform:scale(1.05);
+}
+
+/* Refresh Gradient */
+.refresh-btn{
+  background:linear-gradient(45deg,#ff512f,#dd2476);
+}
+
+.refresh-btn:hover{
+  transform:scale(1.05);
+}
+
+form{
+  max-width:1000px;
+  margin:auto;
+  background:#ffffffee;
+  padding:30px 50px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.question{
+  margin-bottom:25px;
+  padding:15px;
+  border-left:5px solid #007BFF;
+  background:#f7f7f7;
+  border-radius:10px;
+}
+
+.question p{
+  font-weight:bold;
+}
+
+label{
+  display:block;
+  margin:6px 0;
+  cursor:pointer;
+}
+
+.question.missing{
+  background:#ffd6d6;
+  border-left:5px solid red;
+}
+
+.button-container{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin:30px 0;
+}
+
+button{
+  padding:12px 25px;
+  border:none;
+  border-radius:40px;
+  cursor:pointer;
+  font-weight:bold;
+  color:white;
+  transition:0.3s;
+}
+
+.submit-btn{
+  background:linear-gradient(45deg,#FF6B6B,#FFD93D);
+}
+
+.bottom-btn{
+  background:linear-gradient(45deg,#11998e,#38ef7d);
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+footer{
+  text-align:center;
+  padding:15px 0;
+  color:white;
+  margin-top:auto;
+  background:rgba(0,0,0,0.2);
+}
+</style>
+</head>
+<body>
+
+<h1>Interactive Web-Based Web Technology Assessment System</h1>
+
+<!-- ===== TOP BUTTONS ===== -->
+<div class="top-buttons">
+  <button class="top-btn go-btn" onclick="scrollToBottom()">⬇ Go to Bottom</button>
+  <button class="top-btn refresh-btn" onclick="refreshPage()"> Refresh </button>
+</div>
+
+<form id="quizForm"></form>
+
+<footer>Created by Md. Tawfiqul Islam Tamal | Department Of Computer Science & Engineering | AIUB</footer>
+
+<script>
+
+// ===== 55 QUESTIONS =====
+const questions = [
+{q:"1. What does HTML stand for?",opts:["Hyper Tool Markup Language","Hyper Text Markup Language","Home Text Machine Language","Hyperlinks and Text Markup Language"],ans:"Hyper Text Markup Language"},
+{q:"2. Which tag is used to create a hyperlink?",opts:["<link>","<a>","<href>","<hyper>"],ans:"<a>"},
+{q:"3. Which tag is used to insert an image?",opts:["<image>","<img>","<src>","<picture>"],ans:"<img>"},
+{q:"4. Which attribute specifies the destination of a link?",opts:["src","link","href","action"],ans:"href"},
+{q:"5. Which tag creates a line break?",opts:["<lb>","<break>","<br>","<hr>"],ans:"<br>"},
+{q:"6. Which tag is used to create a form?",opts:["<input>","<form>","<submit>","<data>"],ans:"<form>"},
+{q:"7. Which attribute specifies where form data is sent?",opts:["method","action","type","target"],ans:"action"},
+{q:"8. Which input type hides user input?",opts:["text","hidden","password","secure"],ans:"password"},
+{q:"9. Which tag defines a table row?",opts:["<td>","<tr>","<th>","<row>"],ans:"<tr>"},
+{q:"10. Which tag defines a table header cell?",opts:["<td>","<tr>","<th>","<thead>"],ans:"<th>"},
+{q:"11. Metadata is placed inside which tag?",opts:["<body>","<meta>","<head>","<title>"],ans:"<head>"},
+{q:"12. Which meta tag defines character encoding?",opts:["<meta charset='UTF-8'>","<meta type='UTF-8'>","<meta encode='UTF-8'>","<meta char='UTF-8'>"],ans:"<meta charset='UTF-8'>"},
+{q:"13. Which server hosts websites?",opts:["FTP Server","SMTP Server","Web Server","Game Server"],ans:"Web Server"},
+{q:"14. Which server sends emails?",opts:["FTP","SMTP","DNS","Proxy"],ans:"SMTP"},
+{q:"15. Which server translates domain name to IP address?",opts:["Web Server","FTP Server","DNS Server","Application Server"],ans:"DNS Server"},
+{q:"16. Which server stores and transfers files?",opts:["FTP Server","DNS Server","SMTP","Proxy"],ans:"FTP Server"},
+{q:"17. Which server verifies user login?",opts:["Game Server","Auth Server","FTP Server","DNS Server"],ans:"Auth Server"},
+{q:"18. HTTP stands for?",opts:["Hyper Text Transfer Protocol","High Transfer Text Protocol","Hyper Transfer Text Program","Home Tool Transfer Protocol"],ans:"Hyper Text Transfer Protocol"},
+{q:"19. HTTPS is more secure because it uses?",opts:["FTP","Encryption (SSL/TLS)","DNS","HTML"],ans:"Encryption (SSL/TLS)"},
+{q:"20. Which HTTP method is used to retrieve data?",opts:["POST","GET","PUT","DELETE"],ans:"GET"},
+{q:"21. A typical HTTP response contains?",opts:["Status Code","Headers","Body","All of the above"],ans:"All of the above"},
+{q:"22. In Client-Server model, who requests data?",opts:["Server","Client","DNS","Router"],ans:"Client"},
+{q:"23. Three-tier architecture includes?",opts:["Client, Server","Presentation, Logic, Database","Browser, DNS, FTP","HTML, CSS, JS"],ans:"Presentation, Logic, Database"},
+{q:"24. In Peer-to-Peer model, devices act as?",opts:["Only client","Only server","Both client and server","None"],ans:"Both client and server"},
+{q:"25. URL stands for?",opts:["Uniform Resource Locator","Universal Resource Link","Uniform Reference Link","Unique Resource Locator"],ans:"Uniform Resource Locator"},
+{q:"26. URN is used to?",opts:["Locate resource","Name resource uniquely","Host website","Encrypt data"],ans:"Name resource uniquely"},
+{q:"27. CSS stands for?",opts:["Computer Style Sheets","Creative Style Sheets","Cascading Style Sheets","Colorful Style Sheets"],ans:"Cascading Style Sheets"},
+{q:"28. Which is an inline CSS example?",opts:["<style>","style=''","External file","<css>"],ans:"style=''"},
+{q:"29. Which tag is used for internal CSS?",opts:["<css>","<link>","<style>","<script>"],ans:"<style>"},
+{q:"30. Which is used for external CSS?",opts:["<style>","<link>","<meta>","<css>"],ans:"<link>"},
+{q:"31. Which is a relative unit?",opts:["px","cm","em","mm"],ans:"em"},
+{q:"32. 1rem is relative to?",opts:["Parent element","Root element","Screen size","Browser"],ans:"Root element"},
+{q:"33. Which selector selects an element by ID?",opts:[".id","#id","*id","@id"],ans:"#id"},
+{q:"34. Which selector selects all elements?",opts:["*","#",".","&"],ans:"*"},
+{q:"35. Box model includes?",opts:["margin","border","padding","All of the above"],ans:"All of the above"},
+{q:"36. Which property controls stacking order?",opts:["display","overflow","z-index","outline"],ans:"z-index"},
+{q:"37. Which display makes element inline but allows width & height?",opts:["inline","block","inline-block","flex"],ans:"inline-block"},
+{q:"38. Which property hides overflow content?",opts:["display: none","overflow: hidden","position: absolute","z-index"],ans:"overflow: hidden"},
+{q:"39. Which position removes element from normal flow?",opts:["static","relative","absolute","inline"],ans:"absolute"},
+{q:"40. Which property draws border outside element without affecting layout?",opts:["border","outline","margin","padding"],ans:"outline"},
+{q:"41. Which attribute specifies encoding type?",opts:["type","enctype","method","action"],ans:"enctype"},
+{q:"42. Which tag groups table rows?",opts:["<thead>","<tbody>","<tfoot>","All of the above"],ans:"All of the above"},
+{q:"43. Which input type selects file?",opts:["text","file","password","submit"],ans:"file"},
+{q:"44. Purpose of viewport meta?",opts:["Define title","SEO","Responsive layout","Encoding"],ans:"Responsive layout"},
+{q:"45. Middleman server?",opts:["Proxy Server","Auth Server","DNS Server","FTP Server"],ans:"Proxy Server"},
+{q:"46. Application server handles?",opts:["Hosting","Business logic","DNS","FTP"],ans:"Business logic"},
+{q:"47. Success HTTP status code?",opts:["200","404","500","301"],ans:"200"},
+{q:"48. HTTPS uses?",opts:["SSL/TLS encryption","Different ports","GET only","Faster"],ans:"SSL/TLS encryption"},
+{q:"49. Idempotent method?",opts:["GET","POST","PATCH","DELETE"],ans:"GET"},
+{q:"50. Database layer?",opts:["Presentation","Logic","Data Layer","Client"],ans:"Data Layer"},
+{q:"51. P2P transfer?",opts:["Client→Server","Server→Client","Client↔Client","Proxy only"],ans:"Client↔Client"},
+{q:"52. URL part for page?",opts:["Domain","Protocol","Path","Port"],ans:"Path"},
+{q:"53. URN?",opts:["Locates","Names uniquely","HTTP only","IP address"],ans:"Names uniquely"},
+{q:"54. Not box model?",opts:["margin","padding","border","font-size"],ans:"font-size"},
+{q:"55. Select p inside div?",opts:["div p","div > p",".div p","#div p"],ans:"div p"}
+];
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+
+const form=document.getElementById("quizForm");
+
+questions.forEach((q,i)=>{
+  const qDiv=document.createElement("div");
+  qDiv.className="question";
+
+  const p=document.createElement("p");
+  p.textContent=q.q;
+  qDiv.appendChild(p);
+
+  shuffle([...q.opts]).forEach(opt=>{
+    const label=document.createElement("label");
+    const input=document.createElement("input");
+
+    input.type="radio";
+    input.name="q"+(i+1);
+    input.value=opt;
+
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(" "+opt));
+    qDiv.appendChild(label);
+  });
+
+  form.appendChild(qDiv);
+});
+
+const container=document.createElement("div");
+container.className="button-container";
+
+const submit=document.createElement("button");
+submit.type="button";
+submit.className="submit-btn";
+submit.textContent="Submit";
+submit.onclick=checkAnswers;
+
+const topBtn=document.createElement("button");
+topBtn.type="button";
+topBtn.className="bottom-btn";
+topBtn.textContent="⬆ Go to Top";
+topBtn.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+
+container.appendChild(submit);
+container.appendChild(topBtn);
+form.appendChild(container);
+
+function scrollToBottom(){
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+
+function refreshPage(){
+  location.reload();
+}
+
+function checkAnswers(){
+  const qDivs=document.querySelectorAll(".question");
+
+  for(let i=0;i<qDivs.length;i++){
+    const radios=document.getElementsByName("q"+(i+1));
+    let answered=false;
+    for(let r of radios){ if(r.checked){answered=true;break;} }
+
+    if(!answered){
+      qDivs[i].classList.add("missing");
+      qDivs[i].scrollIntoView({behavior:"smooth",block:"center"});
+      alert("Please answer Question "+(i+1));
+      return;
+    } else {
+      qDivs[i].classList.remove("missing");
+    }
+  }
+
+  let correct=0;
+  questions.forEach((q,i)=>{
+    const radios=document.getElementsByName("q"+(i+1));
+    for(let r of radios){
+      if(r.checked && r.value===q.ans) correct++;
+    }
+  });
+
+  alert("Total Correct: "+correct+"/55");
+}
+
+</script>
+</body>
+</html>
