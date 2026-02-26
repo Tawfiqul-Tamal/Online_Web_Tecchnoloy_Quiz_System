@@ -23,7 +23,6 @@ h1{
   padding:30px 0 10px;
 }
 
-/* ===== TOP BUTTON CONTAINER ===== */
 .top-buttons{
   display:flex;
   justify-content:center;
@@ -41,7 +40,6 @@ h1{
   transition:0.3s;
 }
 
-/* Go Bottom Gradient */
 .go-btn{
   background:linear-gradient(45deg,#6a11cb,#2575fc);
 }
@@ -50,7 +48,6 @@ h1{
   transform:scale(1.05);
 }
 
-/* Refresh Gradient */
 .refresh-btn{
   background:linear-gradient(45deg,#ff512f,#dd2476);
 }
@@ -89,6 +86,10 @@ label{
 .question.missing{
   background:#ffd6d6;
   border-left:5px solid red;
+}
+
+.result{
+  margin-top:10px;
 }
 
 .button-container{
@@ -133,7 +134,6 @@ footer{
 
 <h1>Interactive Web-Based Web Technology Assessment System</h1>
 
-<!-- ===== TOP BUTTONS ===== -->
 <div class="top-buttons">
   <button class="top-btn go-btn" onclick="scrollToBottom()">⬇ Go to Bottom</button>
   <button class="top-btn refresh-btn" onclick="refreshPage()"> Refresh </button>
@@ -259,31 +259,51 @@ function refreshPage(){
   location.reload();
 }
 
+/* ===== UPDATED FUNCTION ===== */
 function checkAnswers(){
   const qDivs=document.querySelectorAll(".question");
+  let correct=0;
 
   for(let i=0;i<qDivs.length;i++){
-    const radios=document.getElementsByName("q"+(i+1));
-    let answered=false;
-    for(let r of radios){ if(r.checked){answered=true;break;} }
 
-    if(!answered){
+    const radios=document.getElementsByName("q"+(i+1));
+    let selected=null;
+
+    for(let r of radios){
+      if(r.checked){
+        selected=r.value;
+        break;
+      }
+    }
+
+    if(!selected){
       qDivs[i].classList.add("missing");
       qDivs[i].scrollIntoView({behavior:"smooth",block:"center"});
       alert("Please answer Question "+(i+1));
       return;
-    } else {
-      qDivs[i].classList.remove("missing");
     }
-  }
 
-  let correct=0;
-  questions.forEach((q,i)=>{
-    const radios=document.getElementsByName("q"+(i+1));
-    for(let r of radios){
-      if(r.checked && r.value===q.ans) correct++;
+    qDivs[i].classList.remove("missing");
+
+    const oldResult=qDivs[i].querySelector(".result");
+    if(oldResult) oldResult.remove();
+
+    const result=document.createElement("p");
+    result.className="result";
+    result.style.fontWeight="bold";
+
+    if(selected===questions[i].ans){
+      correct++;
+      result.style.color="green";
+      result.textContent=" Correct!";
+    } else {
+      result.style.color="red";
+      result.innerHTML=" Wrong! <br> Your Answer: <b>"+selected+
+                       "</b><br> Correct Answer: <b>"+questions[i].ans+"</b>";
     }
-  });
+
+    qDivs[i].appendChild(result);
+  }
 
   alert("Total Correct: "+correct+"/55");
 }
