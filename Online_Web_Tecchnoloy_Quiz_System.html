@@ -40,21 +40,8 @@ h1{
   transition:0.3s;
 }
 
-.go-btn{
-  background:linear-gradient(45deg,#6a11cb,#2575fc);
-}
-
-.go-btn:hover{
-  transform:scale(1.05);
-}
-
-.refresh-btn{
-  background:linear-gradient(45deg,#ff512f,#dd2476);
-}
-
-.refresh-btn:hover{
-  transform:scale(1.05);
-}
+.go-btn{ background:linear-gradient(45deg,#6a11cb,#2575fc); }
+.refresh-btn{ background:linear-gradient(45deg,#ff512f,#dd2476); }
 
 form{
   max-width:1000px;
@@ -73,9 +60,7 @@ form{
   border-radius:10px;
 }
 
-.question p{
-  font-weight:bold;
-}
+.question p{ font-weight:bold; }
 
 label{
   display:block;
@@ -90,6 +75,17 @@ label{
 
 .result{
   margin-top:10px;
+  font-weight:bold;
+}
+
+.score-box{
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  margin-top:30px;
+  padding:15px;
+  border-radius:10px;
+  background:#f1f1f1;
 }
 
 .button-container{
@@ -117,9 +113,7 @@ button{
   background:linear-gradient(45deg,#11998e,#38ef7d);
 }
 
-button:hover{
-  transform:scale(1.05);
-}
+button:hover{ transform:scale(1.05); }
 
 footer{
   text-align:center;
@@ -141,11 +135,11 @@ footer{
 
 <form id="quizForm"></form>
 
-<footer>Created by Md. Tawfiqul Islam Tamal | Department Of Computer Science & Engineering | AIUB</footer>
+<footer>Created by Md. Tawfiqul Islam Tamal | CSE | AIUB</footer>
 
 <script>
 
-// ===== 55 QUESTIONS =====
+/* ================= ALL 55 QUESTIONS ================= */
 const questions = [
 {q:"1. What does HTML stand for?",opts:["Hyper Tool Markup Language","Hyper Text Markup Language","Home Text Machine Language","Hyperlinks and Text Markup Language"],ans:"Hyper Text Markup Language"},
 {q:"2. Which tag is used to create a hyperlink?",opts:["<link>","<a>","<href>","<hyper>"],ans:"<a>"},
@@ -204,8 +198,7 @@ const questions = [
 {q:"55. Select p inside div?",opts:["div p","div > p",".div p","#div p"],ans:"div p"}
 ];
 
-function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
-
+/* ================= RENDER ================= */
 const form=document.getElementById("quizForm");
 
 questions.forEach((q,i)=>{
@@ -216,7 +209,7 @@ questions.forEach((q,i)=>{
   p.textContent=q.q;
   qDiv.appendChild(p);
 
-  shuffle([...q.opts]).forEach(opt=>{
+  q.opts.sort(()=>Math.random()-0.5).forEach(opt=>{
     const label=document.createElement("label");
     const input=document.createElement("input");
 
@@ -232,6 +225,7 @@ questions.forEach((q,i)=>{
   form.appendChild(qDiv);
 });
 
+/* ================= BUTTONS ================= */
 const container=document.createElement("div");
 container.className="button-container";
 
@@ -251,61 +245,63 @@ container.appendChild(submit);
 container.appendChild(topBtn);
 form.appendChild(container);
 
+/* ================= CHECK ANSWERS ================= */
+function checkAnswers(){
+  const qDivs=document.querySelectorAll(".question");
+  let correct=0;
+
+  qDivs.forEach((div,i)=>{
+    const selected=document.querySelector("input[name='q"+(i+1)+"']:checked");
+
+    const old=div.querySelector(".result");
+    if(old) old.remove();
+
+    div.classList.remove("missing");
+
+    const result=document.createElement("p");
+    result.className="result";
+
+    if(!selected){
+      div.classList.add("missing");
+      result.style.color="red";
+      result.textContent="⚠ You did not answer this question.";
+    }
+    else if(selected.value===questions[i].ans){
+      correct++;
+      result.style.color="green";
+      result.textContent="✔ Correct!";
+    }
+    else{
+      result.style.color="red";
+      result.innerHTML="✖ Wrong! <br> Your Answer: <b>"+escapeHTML(selected.value)+
+                       "</b><br> Correct Answer: <b>"+escapeHTML(questions[i].ans)+"</b>";
+    }
+
+    div.appendChild(result);
+  });
+
+  const oldScore=document.querySelector(".score-box");
+  if(oldScore) oldScore.remove();
+
+  const percentage=((correct/questions.length)*100).toFixed(2);
+
+  const scoreBox=document.createElement("div");
+  scoreBox.className="score-box";
+  scoreBox.innerHTML="Final Score: "+correct+" / "+questions.length+
+                     "<br>Percentage: "+percentage+"%";
+  form.appendChild(scoreBox);
+}
+
+function escapeHTML(str){
+  return str.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
 function scrollToBottom(){
   window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
 }
 
 function refreshPage(){
   location.reload();
-}
-
-/* ===== UPDATED FUNCTION ===== */
-function checkAnswers(){
-  const qDivs=document.querySelectorAll(".question");
-  let correct=0;
-
-  for(let i=0;i<qDivs.length;i++){
-
-    const radios=document.getElementsByName("q"+(i+1));
-    let selected=null;
-
-    for(let r of radios){
-      if(r.checked){
-        selected=r.value;
-        break;
-      }
-    }
-
-    if(!selected){
-      qDivs[i].classList.add("missing");
-      qDivs[i].scrollIntoView({behavior:"smooth",block:"center"});
-      alert("Please answer Question "+(i+1));
-      return;
-    }
-
-    qDivs[i].classList.remove("missing");
-
-    const oldResult=qDivs[i].querySelector(".result");
-    if(oldResult) oldResult.remove();
-
-    const result=document.createElement("p");
-    result.className="result";
-    result.style.fontWeight="bold";
-
-    if(selected===questions[i].ans){
-      correct++;
-      result.style.color="green";
-      result.textContent=" Correct!";
-    } else {
-      result.style.color="red";
-      result.innerHTML=" Wrong! <br> Your Answer: <b>"+selected+
-                       "</b><br> Correct Answer: <b>"+questions[i].ans+"</b>";
-    }
-
-    qDivs[i].appendChild(result);
-  }
-
-  alert("Total Correct: "+correct+"/55");
 }
 
 </script>
